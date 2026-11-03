@@ -42,7 +42,9 @@ python organize_downloads.py "C:/Users/me/Desktop/test" --apply
 <!-- Add your before/after screenshots here -->
 | Before | After |
 | --- | --- |
-| ![before](before.png) | ![after](after.png) |
+| <img width="144" height="143" alt="Screenshot 2026-11-04 at 1 01 26 AM" src="https://github.com/user-attachments/assets/c5c67536-a2a5-47d1-9197-463805b13f84" />
+| <img width="144" height="143" alt="Screenshot 2026-11-04 at 1 00 49 AM" src="https://github.com/user-attachments/assets/e6d70723-bd4d-4bad-8dd7-8b31534e2bc4" />
+ |
 
 ## What I learned
 - How to work with files and folders using `pathlib` and `shutil`
