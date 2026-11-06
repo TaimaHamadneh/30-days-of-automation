@@ -43,8 +43,8 @@ python3 sales_report.py           # creates the Excel report
 To use your own data, put any CSV files with the same columns in `input/`.
 
 ## Result
-<!-- Add your screenshot here -->
-![report](screenshot.png)
+<img width="1488" height="811" alt="Screenshot 2026-11-06 at 9 17 04 PM" src="https://github.com/user-attachments/assets/f0f01e07-2256-4ff7-b6d7-d7c98fc2e6d9" />
+
 
 ## What I learned
 - `pd.concat` merges many files into one table
