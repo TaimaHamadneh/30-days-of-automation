@@ -51,10 +51,10 @@ python3 morning_briefing.py
 
 
 ## Result
-
+<img width="502" height="244" alt="Screenshot 2026-11-07 at 12 47 07 AM" src="https://github.com/user-attachments/assets/c263a8a7-4441-491e-8482-fa59de658f7e" />
 
 ## What I learned
 - How to read nested JSON (`data["daily"]["temperature_2m_max"][0]`)
 - One helper function for all API calls keeps the code clean
 - Real automation must expect failures: APIs go down, networks drop
-- Secrets (API tokens) go in `.env` and `.gitignore`, never in the code
+
