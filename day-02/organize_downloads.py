@@ -59,7 +59,7 @@ def unique_destination(dest: Path) -> Path:
 def organize(folder: Path, apply: bool) -> None:
     category_names = set(CATEGORIES) | {"Other"}
     moved = skipped = 0
-
+ 
     for file in folder.iterdir():
         # Only loose files: skip folders (including the ones we create) and hidden files.
         if not file.is_file() or file.name.startswith("."):
