@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.taima.briefing</string>
+
+    <!-- Full paths only: launchd doesn't know your venv or current folder -->
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Users/YOUR_USER/Projects/30-days-of-automation/.venv/bin/python3</string>
+        <string>/Users/YOUR_USER/Projects/30-days-of-automation/day-06/main.py</string>
+    </array>
+    <key>WorkingDirectory</key>
+    <string>/Users/YOUR_USER/Projects/30-days-of-automation/day-06</string>
+
+    <!-- Every day at 07:00. If the Mac is asleep, it runs when it wakes up -->
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Hour</key>
+        <integer>7</integer>
+        <key>Minute</key>
+        <integer>0</integer>
+    </dict>
+
+    <key>StandardOutPath</key>
+    <string>/Users/YOUR_USER/Projects/30-days-of-automation/day-06/logs/briefing.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/YOUR_USER/Projects/30-days-of-automation/day-06/logs/briefing-error.log</string>
+</dict>
+</plist>
