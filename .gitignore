@@ -6,3 +6,8 @@ __pycache__/
 logs/
 videos/
 automation_log.txt
+seen.json
+opportunity-scout/reports/
+seen_jobs.json
+job_tracker.xlsx
+day-06/briefings/

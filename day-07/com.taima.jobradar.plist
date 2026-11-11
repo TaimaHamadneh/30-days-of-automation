@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- A unique name for this job -->
+    <key>Label</key>
+    <string>com.taima.jobradar</string>
+
+    <!-- What to run: the Python inside your venv + the script (full paths only) -->
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Users/taimahamadneh/Projects/30-days-of-automation/.venv/bin/python3</string>
+        <string>/Users/taimahamadneh/Projects/30-days-of-automation/day-07/job_radar.py</string>
+    </array>
+
+    <!-- Run it from inside the day-07 folder -->
+    <key>WorkingDirectory</key>
+    <string>/Users/taimahamadneh/Projects/30-days-of-automation/day-07</string>
+
+    <!-- When: every day at 09:00 (if the Mac is asleep, it runs when it wakes up) -->
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Hour</key>
+        <integer>9</integer>
+        <key>Minute</key>
+        <integer>0</integer>
+    </dict>
+
+    <!-- Where to write the output and the errors -->
+    <key>StandardOutPath</key>
+    <string>/Users/taimahamadneh/Projects/30-days-of-automation/day-07/logs/jobradar.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/taimahamadneh/Projects/30-days-of-automation/day-07/logs/jobradar-error.log</string>
+</dict>
+</plist>

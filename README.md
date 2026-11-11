@@ -14,6 +14,7 @@ I'm a computer engineer learning **RPA and AI automation** in 30 days (November 
 | [04](day-04) | Morning briefing bot (3 APIs) | REST APIs, JSON, error handling |
 | [05](day-05) | Web robot with Playwright | Browser automation, selectors, waits |
 | [06](day-06) | Briefing to Telegram, every day at 7:00 | Telegram Bot API, `launchd` scheduling, alerts |
+| [07](day-07) | Job Radar Bot: 3 job APIs → Telegram + Excel tracker | API normalization, filtering & scoring, state management |
 
 ## Plan
 - **Week 1:** Python automation, APIs, web scraping
