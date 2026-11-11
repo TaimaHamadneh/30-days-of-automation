@@ -1,4 +1,4 @@
-<img width="945" height="2048" alt="WhatsApp Image 2026-11-11 at 6 47 04 PM" src="https://github.com/user-attachments/assets/569851f2-9eab-4beb-aeef-da1edbdbb229" />
+
 # Day 07 – Job Radar Bot 🎯
 
 Part of my **#30DaysOfAutomation** challenge. This is the Week 1 project: it combines everything I built in Days 1–6.
