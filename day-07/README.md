@@ -7,7 +7,7 @@ Part of my **#30DaysOfAutomation** challenge. This is the Week 1 project: it com
 I'm looking for an automation job. Checking job boards every day takes time, most jobs don't match my skills, and I keep seeing the same posts again.
 
 ## The solution
-A bot that runs **every morning at 9:00**, collects jobs from **3 free job APIs**, keeps only the ones that match my skills, skips jobs it already showed me, and sends the best 5 to my **Telegram**. Every match is also saved to an **Excel tracker** where I mark what I applied to.
+A bot that runs **every morning at 9:00**, collects jobs from **3 free job APIs**, keeps only the ones that match my CV (automation, software development, business & projects), skips jobs it already showed me, and sends the best 8 to my **Telegram**. Every match is also saved to an **Excel tracker** where I mark what I applied to.
 
 ```
 09:00 launchd ──► job_radar.py
@@ -37,9 +37,9 @@ From **856 jobs**, only a few matched my filters. That's the point: the bot read
 | **Collect** | One fetch function per API. Arbeitnow is paginated (3 pages) |
 | **Normalize** | Each API returns a different JSON shape. One function per source turns every job into the same format: `id, source, title, company, location, remote, tags, url, date` |
 | **Filter** | Remote only, posted in the last 14 days, no senior/lead/director roles |
-| **Score** | +2 for each keyword in the title, +1 for each keyword in the tags. Whole-word matching, so "rpa" doesn't match inside another word |
+| **Score** | Role in title +3, skill in title +2, role or skill in tags +1. Whole-word matching, so "rpa" doesn't match inside another word |
 | **Remember** | `seen_jobs.json` stores jobs already sent, so I never get the same job twice |
-| **Send** | Top 5 to Telegram, each with "via Remotive / Arbeitnow / Jobicy" |
+| **Send** | Top 8 to Telegram, each with "via Remotive / Arbeitnow / Jobicy" |
 | **Track** | Every match goes into `job_tracker.xlsx`, with a Status column I fill in ("Applied", "Interview"). The bot keeps my notes on every run |
 
 ## What makes it reliable
@@ -49,14 +49,30 @@ From **856 jobs**, only a few matched my filters. That's the point: the bot read
 - **Crash alerts** to Telegram, so it never fails silently
 - `--dry-run` mode to preview the message without sending or saving anything
 
+## What it looks for (from my CV)
+Jobs are grouped into 3 categories, and each message shows the category and the words that matched:
+
+| Category | Role keywords |
+| --- | --- |
+| 🤖 Automation & AI | automation, RPA, UiPath, n8n, integration, workflow, AI agent, LLM, RAG |
+| 💻 Software Development | full stack, backend, frontend, web developer, software engineer, Appian, low-code |
+| 📈 Business & Projects | business development, project manager, product owner, scrum master, proposal, tender, pre-sales |
+
+**Skills:** Python, Django, FastAPI, C#, .NET, Node.js, JavaScript, TypeScript, React, Next.js, PHP, Laravel, Flutter, SQL, PostgreSQL, MongoDB, REST API, Git, Linux.
+
+**Scoring:** role in the title +3 · skill in the title +2 · role or skill only in the tags +1.
+A job needs at least one role or skill **in its title**, so jobs with a skill hidden in their tags don't flood the list.
+
 ## Settings
 At the top of `job_radar.py`:
 ```python
-KEYWORDS = ["automation", "rpa", "uipath", "n8n", "python", "integration", "ai agent", "workflow", ...]
+ROLES = {"🤖 Automation & AI": [...], "💻 Software Development": [...], "📈 Business & Projects": [...]}
+SKILLS = ["python", "django", "c#", ".net", "react", "node.js", "laravel", ...]
 EXCLUDE = ["senior", "lead", "principal", "staff", "head of", "director", "10+ years"]
 REMOTE_ONLY = True
 MAX_AGE_DAYS = 14
-TOP_N = 5
+MIN_SCORE = 2   # raise it for fewer, stricter matches
+TOP_N = 8
 ```
 
 ## How to run

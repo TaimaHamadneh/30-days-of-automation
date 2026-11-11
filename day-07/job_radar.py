@@ -26,17 +26,41 @@ warnings.filterwarnings("ignore", message="urllib3 v2 only supports OpenSSL")
 import pandas as pd       # noqa: E402
 import requests           # noqa: E402
 
-BASE = Path(__file__).parent
+BASE = Path(__file__).resolve().parent
 sys.path.insert(0, str(BASE.parent / "day-06"))   # reuse notify.py from Day 6
 from notify import send_telegram                   # noqa: E402
 
 # ---------------- Settings: change these ----------------
-KEYWORDS = ["automation", "rpa", "uipath", "n8n", "python", "integration",
-            "ai agent", "workflow", "power automate", "zapier", "make.com", "llm"]
-EXCLUDE = ["senior", "sr.", "lead", "principal", "staff", "head of", "director", "10+ years"]
+# Job ROLES I want, grouped (from my CV). A role word in the job TITLE = +3
+ROLES = {
+    "🤖 Automation & AI": [
+        "automation", "rpa", "uipath", "n8n", "power automate", "zapier", "workflow",
+        "integration", "ai agent", "ai engineer", "llm", "agentic", "rag",
+    ],
+    "💻 Software Development": [
+        "full stack", "full-stack", "fullstack", "backend", "back-end", "back end",
+        "frontend", "front-end", "web developer", "software engineer", "software developer",
+        "appian", "low-code", "low code",
+    ],
+    "📈 Business & Projects": [
+        "business development", "project manager", "project management", "program manager",
+        "product owner", "scrum master", "proposal", "tender", "bid manager", "pre-sales",
+        "presales", "solutions consultant", "partnerships",
+    ],
+}
+
+# My technical SKILLS (from my CV). Skill in the TITLE = +2, in the TAGS = +1
+SKILLS = [
+    "python", "django", "fastapi", "c#", ".net", "asp.net", "node.js", "nodejs",
+    "javascript", "typescript", "react", "next.js", "nextjs", "php", "laravel", "flutter",
+    "sql", "sql server", "postgresql", "mongodb", "rest api", "git", "linux",
+]
+
+EXCLUDE = ["senior", "sr.", "lead", "principal", "staff", "head of", "director", "vp", "10+ years"]
 REMOTE_ONLY = True
 MAX_AGE_DAYS = 14          # ignore jobs older than this (None = no limit)
-TOP_N = 5                  # how many jobs to send per day
+MIN_SCORE = 2              # lower = more jobs, higher = stricter
+TOP_N = 8                  # how many jobs to send per day
 ARBEITNOW_PAGES = 3
 SOURCES = ["remotive", "arbeitnow", "jobicy"]
 
@@ -168,9 +192,16 @@ def contains(text: str, word: str) -> bool:
 
 
 def score_job(job: dict) -> int:
-    """0 = not a match. +2 for each keyword in the title, +1 for each keyword only in the tags."""
+    """
+    0 = not a match. Otherwise:
+      role word in title +3, in tags +1 · skill in title +2, in tags +1
+    The job must have at least one role or skill IN THE TITLE, so a random job with
+    'python' hidden in its tags doesn't make the list.
+    Also fills job["category"] and job["matched"] for the message and the tracker.
+    """
     title = job["title"].lower()
     tags = " ".join(job["tags"]).lower()
+    job["category"], job["matched"] = "", []
 
     if any(contains(title, word) for word in EXCLUDE):
         return 0
@@ -183,12 +214,30 @@ def score_job(job: dict) -> int:
         except ValueError:
             pass
 
-    score = 0
-    for word in KEYWORDS:
+    score, in_title, best = 0, False, {}
+    for group, words in ROLES.items():
+        for word in words:
+            if contains(title, word):
+                score += 3
+                in_title = True
+                best[group] = best.get(group, 0) + 3
+                job["matched"].append(word)
+            elif contains(tags, word):
+                score += 1
+                best[group] = best.get(group, 0) + 1
+                job["matched"].append(word)
+    for word in SKILLS:
         if contains(title, word):
             score += 2
+            in_title = True
+            job["matched"].append(word)
         elif contains(tags, word):
             score += 1
+            job["matched"].append(word)
+
+    if not in_title or score < MIN_SCORE:
+        return 0
+    job["category"] = max(best, key=best.get) if best else "💻 Software Development"
     return score
 
 
@@ -207,15 +256,18 @@ def save_seen(seen: set) -> None:
 
 def update_tracker(matches: list) -> int:
     """Add new matches to job_tracker.xlsx. Old rows (and the Status you typed) are kept."""
-    columns = ["id", "date_found", "score", "title", "company", "location", "source", "url", "status"]
+    columns = ["id", "date_found", "score", "category", "title", "company", "matched",
+               "location", "source", "url", "status"]
     new = pd.DataFrame([{
         "id": j["id"], "date_found": date.today().isoformat(), "score": j["score"],
-        "title": j["title"], "company": j["company"], "location": j["location"],
+        "category": j["category"][2:].strip(), "title": j["title"], "company": j["company"],
+        "matched": ", ".join(j["matched"]), "location": j["location"],
         "source": SOURCE_NAMES[j["source"]], "url": j["url"], "status": "",
     } for j in matches], columns=columns)
 
     if TRACKER_FILE.exists():
         old = pd.read_excel(TRACKER_FILE, dtype={"status": str}).fillna("")
+        old = old.reindex(columns=columns, fill_value="")   # older trackers had fewer columns
         new = new[~new["id"].isin(old["id"])]            # never add the same job twice
         table = pd.concat([old, new], ignore_index=True)
     else:
@@ -227,7 +279,7 @@ def update_tracker(matches: list) -> int:
         sheet = writer.sheets["Jobs"]
         sheet.freeze_panes = "A2"
         sheet.auto_filter.ref = sheet.dimensions
-        for col, width in zip("ABCDEFGHI", [26, 12, 7, 45, 25, 20, 11, 50, 14]):
+        for col, width in zip("ABCDEFGHIJK", [26, 12, 7, 22, 45, 25, 30, 20, 11, 50, 14]):
             sheet.column_dimensions[col].width = width
     return len(new)
 
@@ -254,6 +306,7 @@ def build_messages(top: list, total_checked: int, total_matches: int, failed: li
         blocks.append(
             f"{i}. <b>{e(j['title'])}</b> · {e(j['company'])}\n"
             f"   {place} · score {j['score']}\n"
+            f"   {j['category']} · matched: {e(', '.join(j['matched'][:5]))}\n"
             f"   {e(j['url'])}\n"
             f"   via {SOURCE_NAMES[j['source']]} ({SOURCE_SITES[j['source']]})"
         )
