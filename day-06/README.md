@@ -74,6 +74,7 @@ Python 3 · `requests` · `python-dotenv` · Telegram Bot API · macOS `launchd`
 
 ## Result
 
+<img width="238" height="1100" alt="WhatsApp Image 2026-11-10 at 1 50 03 AM" src="https://github.com/user-attachments/assets/ab604a74-a48b-4cde-bff2-9d7134e11e1c" />
 
 
 ## What I learned
