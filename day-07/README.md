@@ -79,7 +79,8 @@ Python 3 · `requests` · `pandas` · `openpyxl` · Telegram Bot API · macOS `l
 Job data from [Remotive](https://remotive.com), [Arbeitnow](https://www.arbeitnow.com) and [Jobicy](https://jobicy.com).
 
 ## Result
-<img width="945" height="2048" alt="WhatsApp Image 2026-11-11 at 6 47 04 PM" src="https://github.com/user-attachments/assets/c098828e-85f7-4bb8-9664-5834a80bad57" />
+
+<img width="545" height="1648" alt="WhatsApp Image 2026-11-11 at 6 47 04 PM" src="https://github.com/user-attachments/assets/c098828e-85f7-4bb8-9664-5834a80bad57" />
 
 
 ## What I learned
